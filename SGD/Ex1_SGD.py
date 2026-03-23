@@ -216,33 +216,9 @@ def run_example(n_parents):
         num+= 1  
         
     sol1= np.vstack((P[:,0], P[:,1],P[:,2])).T
-#     fit_= P[:,-1]<=0.1
-#     solns= sol1[fit_]
-        
     return sol1
 
 
-# ## Task 1
-# nubmer_points_list= [1400,1500]
-# # n_runs= [5, 10, 15, 20, 25, 30, 35, 40, 50, 55, 60]
-# n_runs= [10] #[5, 10, 15, 20]
-# n_r= 10
-# def run_with_diff_n_runs(num_points):
-#     final_res= []
-#     print("************** ",num_points)
-#     for i in range(7,n_r+1):
-#         res= run_example(num_points)
-#         #temp_res.extend(res)
-#         res= np.array(res)
-
-#         np.savetxt('./solns_runs/Ex1/N_'+str(num_points)+"/"+str(i+1)+"_"+"solns"+'_'+'run_'+str(n_r)+'_'+str(num_points)+'pts'+'.txt', res, delimiter=',')
-
-            
-#         #final_res.append(temp_res)
-            
-#     return final_res
-
-# results = Parallel(n_jobs=num_processes)(delayed(run_with_diff_n_runs)(num_points) for num_points in nubmer_points_list)
 def run_each(num_points):
     res = run_example(num_points)
     res = np.array(res)

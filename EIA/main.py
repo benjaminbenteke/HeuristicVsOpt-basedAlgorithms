@@ -45,22 +45,6 @@ def main():
         print("Running Exercise 4...")
         Ex4_EIA.main()
     
-    if "4" in selected:
-        print("Running Exercise 4...")
-        Ex4_EIA.main()
-
-    if "4" in selected:
-        print("Running Exercise 4...")
-        Ex4_EIA.main()
-
-    if "4" in selected:
-        print("Running Exercise 4...")
-        Ex4_EIA.main()
-
-    if "4" in selected:
-        print("Running Exercise 4...")
-        Ex4_EIA.main()
-
     if "5" in selected:
         print("Running Exercise 5...")
         Ex5_EIA.main()
@@ -72,11 +56,11 @@ def main():
     if "7" in selected:
         print("Running Exercise 7...")
         Ex7_EIA.main()
-    
+
     if "8" in selected:
         print("Running Exercise 8...")
         Ex8_EIA.main()
-    
+
     if "9" in selected:
         print("Running Exercise 9...")
         Ex9_EIA.main()
