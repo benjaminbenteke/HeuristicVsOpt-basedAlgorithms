@@ -1,4 +1,4 @@
-# heuristics vs. Optmization-based algorithms
+# Heuristics vs. Optmization-based algorithms
 
 ## Run EIA
 ### Run all exercises
