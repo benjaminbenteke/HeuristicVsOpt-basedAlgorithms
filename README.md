@@ -1,4 +1,4 @@
-# Heuristics vs. Optimization-Based Algorithms for GNEP
+# Heuristics vs. Optimization-Based Algorithms for GNEPs
 
 This project investigates and compares two classes of algorithms—heuristic methods and optimization-based methods—in their ability to characterize the solution set of a Generalized Nash Equilibrium Problem (GNEP).
 
