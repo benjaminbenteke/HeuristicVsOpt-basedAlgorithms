@@ -11,9 +11,9 @@ A GNEP extends the classical Nash equilibrium by allowing each player's feasible
 
 The project compares these two approaches in terms of:
 
-Accuracy – How closely the algorithm identifies the true equilibrium set.
-Diversity – 
-Coverage – 
+* Accuracy – How closely the algorithm identifies the true equilibrium set.
+* Diversity – 
+* Coverage – 
 Characterization of solution set – How well the method describes the entire set of equilibria rather than a single solution.
 
 ## Run EIA
