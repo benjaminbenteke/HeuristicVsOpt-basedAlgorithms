@@ -1,4 +1,4 @@
-\textbf{Heuristics vs. Optimization-Based Algorithms for GNEP}
+<br>Heuristics vs. Optimization-Based Algorithms for GNEP</>
 
 # Project Description
 
