@@ -1,6 +1,4 @@
-<br Heuristics vs. Optimization-Based Algorithms for GNEP />
-
-# Project Description
+# Heuristics vs. Optimization-Based Algorithms for GNEP
 
 This project investigates and compares two classes of algorithms—heuristic methods and optimization-based methods—in their ability to characterize the solution set of a Generalized Nash Equilibrium Problem (GNEP).
 
@@ -9,13 +7,12 @@ A GNEP extends the classical Nash equilibrium by allowing each player's feasible
 * Heuristic algorithms: 
 * Optimization-based algorithms:
 
-The project compares these two approaches in terms of:
+The project compares these two approaches on how well they describe the entire set of equilibria rather than a single solution. We achieve this by measuring the:
 
 * Accuracy – How closely the algorithm identifies the true equilibrium set.
 * Diversity – 
 * Coverage – 
-Characterization of solution set – How well the method describes the entire set of equilibria rather than a single solution.
-
+Characterization of solution set – 
 ## Run EIA
 ### Run all exercises
 ```
