@@ -10,7 +10,6 @@ import Ex6_SGD
 import Ex7_SGD
 import Ex8_SGD
 import Ex9_SGD
-import Ex10_SGD
 
 
 def main():
@@ -64,10 +63,6 @@ def main():
     if "9" in selected:
         print("Running Exercise 9...")
         Ex9_SGD.main()
-
-    if "10" in selected:
-        print("Running Exercise 10...")
-        Ex10_SGD.main()
 
 if __name__ == "__main__":
     main()
