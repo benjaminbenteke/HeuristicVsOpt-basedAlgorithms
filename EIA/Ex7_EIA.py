@@ -29,10 +29,11 @@ import joblib
 from joblib import Parallel, delayed
 joblib.cpu_count()
 num_processes = -1
+
 import os
 
 for num_points in range(100, 1501, 100):
-    path = f"./Ex7/N_{num_points}"
+    path = f"./Ex8/N_{num_points}"
     os.makedirs(path, exist_ok=True)
 # np.set_printoptions(precision=1064)
 np.set_printoptions(suppress=True)
@@ -73,7 +74,6 @@ def count_repeated_points(points):
 
 ## Ex7
 
-## Ex8
 def pen(a,b):
 
   def func1(x):
@@ -82,24 +82,30 @@ def pen(a,b):
   def func2(x):
     return -x
 
-  def g1(x):
-    return 1-x-b
+  def g11(x):
+    return 1-0.5*x-b
+  
+  def g12(x):
+    return 1-x-0.5*b
 
-  def g2(x):
-    return 1-x-a
+  def g21(x):
+    return 1-x-0.5*a
+
+  def g22(x):
+    return 1-0.5*x-a
 
     
-  constraints1 = [{'type': 'ineq', 'fun': g1}]
+  constraints1 = [{'type': 'ineq', 'fun': g11},{'type': 'ineq', 'fun': g12}]
 
   bound1 = [(0.0,1.0-b)]
   bound2 = [(0.0,1.0-a)]
 
 #   constraint1 = {'type': 'ineq', 'fun': g1}
-  constraint2 = {'type': 'ineq', 'fun': g2}
+  constraint2 = [{'type': 'ineq', 'fun': g21},{'type': 'ineq', 'fun': g22}]
   
 #   bounds = bound1
-  result1 = minimize(func1, x0=0.0, method='SLSQP', constraints= constraints1, bounds= bound1) #, options={'maxiter':5}
-  result2 = minimize(func2, x0=0.0, method='SLSQP',constraints= constraint2, bounds= bound2)
+  result1 = minimize(func1, x0=0.0, method='SLSQP', constraints= constraints1) #, options={'maxiter':5}
+  result2 = minimize(func2, x0=0.0, method='SLSQP',constraints= constraint2)
 
   shadowX = result1.x
   shadowY = result2.x
@@ -109,6 +115,8 @@ def pen(a,b):
 
 
 def run_example(num_points):
+    n_delete= int((25*num_points)/100)
+    
     def minSearch(xMin):
       return xMin - (xMin - 0.0)*(math.pow(0.99,k))
     def maxSearch(xMax):
@@ -125,13 +133,6 @@ def run_example(num_points):
     def randomY(maxY, minY):
       return random.uniform(minY, maxY)
 
-    
-    n_delete= int((25*num_points)/100)
-    
-    
-#     num_points,n_delete= 100,30
-
-
     setXYP = np.zeros(3*num_points)
     setXYP = setXYP.reshape(num_points,3)
 
@@ -147,6 +148,7 @@ def run_example(num_points):
     minY = np.empty(num_points-n_delete, dtype=float)
     maxY = np.empty(num_points-n_delete, dtype=float)
     
+    #initializing all of the points
     num = 1
 
     setX = np.random.uniform(low=0.0, high= 1.0, size = num_points)
@@ -182,7 +184,6 @@ def run_example(num_points):
 
       line = list(map(regLine, newX))
 
-
       minXBound = minSearch(lowXpoint)
       maxXBound = maxSearch(highXpoint)
 
@@ -206,6 +207,9 @@ def run_example(num_points):
       num += 1
 
 
+
+
+
         
     return setXYP
 
@@ -219,21 +223,18 @@ def run_each(num_points):
     res= res[:,:-1]
     #temp_res.extend(res)
     res= np.array(res)#
-    ## Get distinct points
-    #num, distinct_points = count_repeated_points(res)
-    #distinct_points= np.array(distinct_points)
-    
     return res
 
 def run_parallel(num_points,n_r):
     results = Parallel(n_jobs=num_processes)(delayed(run_each)(num_points) for _ in range(n_r))
     for i in range(n_r):
-        np.savetxt('./Ex7/N_'+str(num_points)+"/"+str(i+1)+"_"+"solns"+'_'+'run_'+str(n_r)+'_'+str(num_points)+'pts'+'.txt', results[i], delimiter=',')
+         np.savetxt('./Ex8/N_'+str(num_points)+"/"+str(i+1)+"_"+"solns"+'_'+'run_'+str(n_r)+'_'+str(num_points)+'pts'+'.txt', results[i], delimiter=',')
     #return results
 
 
 def run_with_diff_n_runs(num_points):
-
+    final_res= []
+    
     Parallel(n_jobs=num_processes)(delayed(run_parallel)(num_points,n_r) for n_r in n_runs)
 
 results = Parallel(n_jobs=num_processes)(delayed(run_with_diff_n_runs)(num_points) for num_points in nubmer_points_list)

@@ -29,12 +29,6 @@ import joblib
 from joblib import Parallel, delayed
 joblib.cpu_count()
 num_processes = -1
-
-import os
-
-for num_points in range(100, 1501, 100):
-    path = f"./Ex8/N_{num_points}"
-    os.makedirs(path, exist_ok=True)
 # np.set_printoptions(precision=1064)
 np.set_printoptions(suppress=True)
 
@@ -43,6 +37,11 @@ import joblib
 from joblib import Parallel, delayed
 joblib.cpu_count()
 num_processes = -1
+import os
+
+for num_points in range(100, 1501, 100):
+    path = f"./Ex8/N_{num_points}"
+    os.makedirs(path, exist_ok=True)
 
 eps_t= 1e-5
 delta= 1e-2
@@ -72,7 +71,6 @@ def count_repeated_points(points):
     return len(distinct_points), np.array(distinct_points)
 
 
-## Ex7
 
 def pen(a,b):
 
@@ -82,30 +80,24 @@ def pen(a,b):
   def func2(x):
     return -x
 
-  def g11(x):
-    return 1-0.5*x-b
-  
-  def g12(x):
-    return 1-x-0.5*b
+  def g1(x):
+    return 1-x-b
 
-  def g21(x):
-    return 1-x-0.5*a
-
-  def g22(x):
-    return 1-0.5*x-a
+  def g2(x):
+    return 1-x-a
 
     
-  constraints1 = [{'type': 'ineq', 'fun': g11},{'type': 'ineq', 'fun': g12}]
+  constraints1 = [{'type': 'ineq', 'fun': g1}]
 
   bound1 = [(0.0,1.0-b)]
   bound2 = [(0.0,1.0-a)]
 
 #   constraint1 = {'type': 'ineq', 'fun': g1}
-  constraint2 = [{'type': 'ineq', 'fun': g21},{'type': 'ineq', 'fun': g22}]
+  constraint2 = {'type': 'ineq', 'fun': g2}
   
 #   bounds = bound1
-  result1 = minimize(func1, x0=0.0, method='SLSQP', constraints= constraints1) #, options={'maxiter':5}
-  result2 = minimize(func2, x0=0.0, method='SLSQP',constraints= constraint2)
+  result1 = minimize(func1, x0=0.0, method='SLSQP', constraints= constraints1, bounds= bound1) #, options={'maxiter':5}
+  result2 = minimize(func2, x0=0.0, method='SLSQP',constraints= constraint2, bounds= bound2)
 
   shadowX = result1.x
   shadowY = result2.x
@@ -115,8 +107,6 @@ def pen(a,b):
 
 
 def run_example(num_points):
-    n_delete= int((25*num_points)/100)
-    
     def minSearch(xMin):
       return xMin - (xMin - 0.0)*(math.pow(0.99,k))
     def maxSearch(xMax):
@@ -133,6 +123,13 @@ def run_example(num_points):
     def randomY(maxY, minY):
       return random.uniform(minY, maxY)
 
+    
+    n_delete= int((25*num_points)/100)
+    
+    
+#     num_points,n_delete= 100,30
+
+
     setXYP = np.zeros(3*num_points)
     setXYP = setXYP.reshape(num_points,3)
 
@@ -148,7 +145,6 @@ def run_example(num_points):
     minY = np.empty(num_points-n_delete, dtype=float)
     maxY = np.empty(num_points-n_delete, dtype=float)
     
-    #initializing all of the points
     num = 1
 
     setX = np.random.uniform(low=0.0, high= 1.0, size = num_points)
@@ -184,6 +180,7 @@ def run_example(num_points):
 
       line = list(map(regLine, newX))
 
+
       minXBound = minSearch(lowXpoint)
       maxXBound = maxSearch(highXpoint)
 
@@ -207,34 +204,29 @@ def run_example(num_points):
       num += 1
 
 
-
-
-
         
     return setXYP
 
 
 nubmer_points_list= [100, 200,300,400,500,600,700,800,900,1000,1100,1200, 1300,1400,1500]
-# n_runs= [5, 10, 15, 20, 25, 30, 35, 40, 50, 55, 60]
 n_runs= [10]
-
-def run_each(num_points):
-    res= run_example(num_points)
-    res= res[:,:-1]
-    #temp_res.extend(res)
-    res= np.array(res)#
-    return res
-
-def run_parallel(num_points,n_r):
-    results = Parallel(n_jobs=num_processes)(delayed(run_each)(num_points) for _ in range(n_r))
-    for i in range(n_r):
-         np.savetxt('./Ex8/N_'+str(num_points)+"/"+str(i+1)+"_"+"solns"+'_'+'run_'+str(n_r)+'_'+str(num_points)+'pts'+'.txt', results[i], delimiter=',')
-    #return results
-
 
 def run_with_diff_n_runs(num_points):
     final_res= []
-    
-    Parallel(n_jobs=num_processes)(delayed(run_parallel)(num_points,n_r) for n_r in n_runs)
+    for n_r in n_runs:
+        temp_res= []
+        
+        for i in range(n_r):
+            res= run_example(num_points)
+            res= res[:,:-1]
+            temp_res.extend(res)
+            res= np.array(res)
+
+            np.savetxt('./Ex8/N_'+str(num_points)+"/"+str(i+1)+"_"+"solns"+'_'+'run_'+str(n_r)+'_'+str(num_points)+'pts'+'.txt', res, delimiter=',')
+
+            
+        final_res.append(temp_res)
+            
+    return final_res
 
 results = Parallel(n_jobs=num_processes)(delayed(run_with_diff_n_runs)(num_points) for num_points in nubmer_points_list)

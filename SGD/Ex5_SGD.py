@@ -26,6 +26,11 @@ joblib.cpu_count()
 num_processes= -1
 np.set_printoptions(suppress=True)
 
+import os
+
+for num_points in range(100, 1501, 100):
+    path = f"./Ex5/N_{num_points}"
+    os.makedirs(path, exist_ok=True)
 
 def randomY(maxY, minY):
   return random.uniform(minY, maxY)
@@ -238,7 +243,7 @@ n_r= 10
 def run_parallel(num_points,n_r):
     results = Parallel(n_jobs=-1,prefer= 'threads')(delayed(run_each)(num_points) for _ in range(n_r))
     for i in range(n_r):
-        np.savetxt('./solns_runs/Ex5/N_' + str(num_points) + "/" + str(i + 1) + "_" + "solns" + '_' + 'run_' + str(n_runs[0]) + '_' + str(num_points) + 'pts' + '.txt', results[i], delimiter=',')
+        np.savetxt('./Ex5/N_' + str(num_points) + "/" + str(i + 1) + "_" + "solns" + '_' + 'run_' + str(n_runs[0]) + '_' + str(num_points) + 'pts' + '.txt', results[i], delimiter=',')
 #def run_with_diff_n_runs(num_points):
    # print("**************", num_points)
     #final_res= []

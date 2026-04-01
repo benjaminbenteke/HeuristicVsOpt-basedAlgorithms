@@ -26,6 +26,12 @@ joblib.cpu_count()
 num_processes= -1
 np.set_printoptions(suppress=True)
 
+import os
+
+for num_points in range(100, 1501, 100):
+    path = f"./Ex9/N_{num_points}"
+    os.makedirs(path, exist_ok=True)
+
 
 def randomY(maxY, minY):
   return random.uniform(minY, maxY)
@@ -115,25 +121,25 @@ def pen(a,b):
     return -x
 
   def func2(x):
-    return -x
+    return 0
 
   def g11(x):
-    return 1-0.5*x-b
+    return 1-x-b
   
   def g12(x):
-    return 1-x-0.5*b
+    return 3-(2*x+4*b)
 
   def g21(x):
-    return 1-x-0.5*a
+    return 1-x-a
 
   def g22(x):
-    return 1-0.5*x-a
+    return 3-(4*x+2*a)
 
     
   constraints1 = [{'type': 'ineq', 'fun': g11},{'type': 'ineq', 'fun': g12}]
 
-  bound1 = [(0.0,1.0-b)]
-  bound2 = [(0.0,1.0-a)]
+  # bound1 = [(0.0,1.0-b)]
+  # bound2 = [(0.0,1.0-a)]
 
 #   constraint1 = {'type': 'ineq', 'fun': g1}
   constraint2 = [{'type': 'ineq', 'fun': g21},{'type': 'ineq', 'fun': g22}]
@@ -148,9 +154,11 @@ def pen(a,b):
   penalty = math.sqrt((math.pow(a-shadowX,2))+(math.pow(b-shadowY,2)))
   return penalty
 
+n_children= 25 # per parent
+
 def pen_children(p,sigma,P):
     children= sigma[:,p].reshape(-1,1)+P[p,:-1]
-    penK= Parallel(n_jobs=2)(delayed(pen)(children[i][0], children[i][1]) for i in range(n_children))
+    penK= Parallel(n_jobs=-1,prefer= 'threads')(delayed(pen)(children[i][0], children[i][1]) for i in range(n_children))
     return penK
 
 def transformation(p_pen,sigma, index_P,pen_ch):
@@ -168,7 +176,6 @@ def get_beta(P, sigma, penchildren):
 
 def run_example(n_parents):
     
-    n_children= 25 # per parent
     n_generations= 1000
     n= 2
     xmin, xmax, ymin, ymax= 0.0, 1.0, 0.0, 1.0
@@ -177,7 +184,7 @@ def run_example(n_parents):
     
     def pen_children(p,sigma,P):
         children= sigma[:,p].reshape(-1,1)+P[p,:-1]
-        penK= Parallel(n_jobs=2)(delayed(pen)(children[i][0], children[i][1]) for i in range(n_children))
+        penK= Parallel(n_jobs=-1,prefer= 'threads')(delayed(pen)(children[i][0], children[i][1]) for i in range(n_children))
         return penK
 
     def transformation(p_pen,sigma, index_P,pen_ch):
@@ -199,9 +206,9 @@ def run_example(n_parents):
         sigma= np.array(sigma).T
 
 
-        penchildren = Parallel(n_jobs=1)(delayed(pen_children)(p,sigma,P) for p in range(n_parents))
+        penchildren = Parallel(n_jobs=-1,prefer= 'threads')(delayed(pen_children)(p,sigma,P) for p in range(n_parents))
         penchildren= np.array(penchildren).T
-        P[:,-1] = Parallel(n_jobs=1)(delayed(pen)(P[p,:-1][0], P[p,:-1][1]) for p in range(n_parents))
+        P[:,-1] = Parallel(n_jobs=-1,prefer= 'threads')(delayed(pen)(P[p,:-1][0], P[p,:-1][1]) for p in range(n_parents))
         beta= get_beta(P, sigma, penchildren)
         P[:,:-1]+= np.array(beta).reshape(-1,1)
 
@@ -215,20 +222,31 @@ def run_example(n_parents):
     return sol1
 
 
+def run_each(num_points):
+    res= run_example(num_points)
+    # res= res[:,:-1]
+    #temp_res.extend(res)
+    res= np.array(res)#
+    ## Get distinct points
+    #num, distinct_points = count_repeated_points(res)
+    #distinct_points= np.array(distinct_points)
+
+    return res
+
 ## Task 1
 nubmer_points_list= [100, 200,300,400,500,600,700,800,900,1000,1100,1200, 1300,1400,1500]
 # n_runs= [5, 10, 15, 20, 25, 30, 35, 40, 50, 55, 60]
 n_runs= [10] #[5, 10, 15, 20]
-
+n_r= 10
 def run_with_diff_n_runs(num_points):
     final_res= []
     print("************** ",num_points)
-    for i in range(n_r):
+    for i in range(n_runs):
         res= run_example(num_points)
-        temp_res.extend(res)
+        # temp_res.extend(res)
         res= np.array(res)
 
-        np.savetxt('./solns_runs/Ex9s/N_'+str(num_points)+"/"+str(i+1)+"_"+"solns"+'_'+'run_'+str(n_r)+'_'+str(num_points)+'pts'+'.txt', res, delimiter=',')
+        np.savetxt('./Ex9/N_'+str(num_points)+"/"+str(i+1)+"_"+"solns"+'_'+'run_'+str(n_r)+'_'+str(num_points)+'pts'+'.txt', res, delimiter=',')
 
             
         #final_res.append(temp_res)

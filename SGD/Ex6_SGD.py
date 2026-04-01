@@ -27,6 +27,12 @@ num_processes= -1
 np.set_printoptions(suppress=True)
 
 
+import os
+
+for num_points in range(100, 1501, 100):
+    path = f"./Ex6/N_{num_points}"
+    os.makedirs(path, exist_ok=True)
+
 def randomY(maxY, minY):
   return random.uniform(minY, maxY)
 
@@ -115,35 +121,26 @@ def pen(a,b):
     return -x
 
   def func2(x):
-    return (2*x-1)**2
+    return -2*x
 
   def g1(x):
-    return 1-x*b
+    return 1-x-b
 
   def g2(x):
-    return 1-x*a
+    return 1-x-a
 
-  def g(x):
-    if x<1.0:
-        return (x-1)**2
-    elif 1.0 <= x <= 2.0:
-        return 0
-    elif x>2.0:
-        return (x-1)**2
     
-  constraints1 = [
-    {'type': 'ineq', 'fun': g},  # 
-    {'type': 'ineq', 'fun': g1}]
+  constraints1 = [{'type': 'ineq', 'fun': g1}]
 
-  bound1 = [(0.0,None)]
-  bound2 = [(0.0,1.0)]
+#   bound1 = [(0.0,1.0-b)]
+#   bound2 = [(0.0,1.0-a)]
 
 #   constraint1 = {'type': 'ineq', 'fun': g1}
   constraint2 = {'type': 'ineq', 'fun': g2}
   
-#   bounds = bound1
-  result1 = minimize(func1, x0=0.0, method='SLSQP', constraints= constraints1, bounds = bound1) #, options={'maxiter':5}
-  result2 = minimize(func2, x0=0.0, method='SLSQP',constraints= constraint2, bounds = bound2)
+#   bounds = bound1C
+  result1 = minimize(func1, x0=0.0, method='SLSQP', constraints= constraints1,options={'maxiter':5}) #, options={'maxiter':5}
+  result2 = minimize(func2, x0=0.0, method='SLSQP',constraints= constraint2,options={'maxiter':5})
 
   shadowX = result1.x
   shadowY = result2.x
@@ -176,7 +173,7 @@ def run_example(n_parents):
     n_generations= 1000
     alpha= 3.0
     n= 2
-    xmin, xmax, ymin, ymax= 0.0, alpha, 0.0, 1.0
+    xmin, xmax, ymin, ymax= 0.0, 1.0, 0.0, 1.0
     P = np.empty((n_parents, n+1))
     P[:, 0:n] = np.random.uniform(low= xmin, high= xmax, size = (n_parents,n))
     
@@ -224,16 +221,16 @@ def run_example(n_parents):
 nubmer_points_list= [100, 200,300,400,500,600,700,800,900,1000,1100,1200, 1300,1400,1500]
 # n_runs= [5, 10, 15, 20, 25, 30, 35, 40, 50, 55, 60]
 n_runs= [10] #[5, 10, 15, 20]
-
+n_r= 10
 def run_with_diff_n_runs(num_points):
     final_res= []
     print("************** ",num_points)
     for i in range(n_r):
         res= run_example(num_points)
-        temp_res.extend(res)
+        # temp_res.extend(res)
         res= np.array(res)
 
-        np.savetxt('./solns_runs/Ex6/N_'+str(num_points)+"/"+str(i+1)+"_"+"solns"+'_'+'run_'+str(n_r)+'_'+str(num_points)+'pts'+'.txt', res, delimiter=',')
+        np.savetxt('./Ex6/N_'+str(num_points)+"/"+str(i+1)+"_"+"solns"+'_'+'run_'+str(n_r)+'_'+str(num_points)+'pts'+'.txt', res, delimiter=',')
 
             
         #final_res.append(temp_res)

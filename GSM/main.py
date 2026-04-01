@@ -1,19 +1,19 @@
 import argparse
 
 # Import your scripts as modules
-import Ex1_SGD
-import Ex2_SGD
-import Ex3_SGD
-import Ex4_SGD
-import Ex5_SGD
-import Ex6_SGD
-import Ex7_SGD
-import Ex8_SGD
-import Ex9_SGD
+import Ex1_SGM
+import Ex2_SGM
+import Ex3_SGM
+import Ex4_SGM
+import Ex5_SGM
+import Ex6_SGM
+import Ex7_SGM
+import Ex8_SGM
+import Ex9_SGM
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Run SGD exercises")
+    parser = argparse.ArgumentParser(description="Run SGM exercises")
     parser.add_argument(
         "--ex",
         nargs="+",
@@ -31,38 +31,38 @@ def main():
 
     if "1" in selected:
         print("Running Exercise 1...")
-        Ex1_SGD.main()
+        Ex1_SGM.main()
 
     if "2" in selected:
         print("Running Exercise 2...")
-        Ex2_SGD.main()
+        Ex2_SGM.main()
 
     if "3" in selected:
         print("Running Exercise 3...")
-        Ex3_SGD.main()
+        Ex3_SGM.main()
     if "4" in selected:
         print("Running Exercise 4...")
-        Ex4_SGD.main()
+        Ex4_SGM.main()
     
     if "5" in selected:
         print("Running Exercise 5...")
-        Ex5_SGD.main()
+        Ex5_SGM.main()
 
     if "6" in selected:
         print("Running Exercise 6...")
-        Ex6_SGD.main()
+        Ex6_SGM.main()
 
     if "7" in selected:
         print("Running Exercise 7...")
-        Ex7_SGD.main()
+        Ex7_SGM.main()
 
     if "8" in selected:
         print("Running Exercise 8...")
-        Ex8_SGD.main()
+        Ex8_SGM.main()
 
     if "9" in selected:
         print("Running Exercise 9...")
-        Ex9_SGD.main()
+        Ex9_SGM.main()
 
 if __name__ == "__main__":
     main()

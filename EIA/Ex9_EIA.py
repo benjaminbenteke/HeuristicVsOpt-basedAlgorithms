@@ -29,6 +29,11 @@ import joblib
 from joblib import Parallel, delayed
 joblib.cpu_count()
 num_processes = -1
+import os
+
+for num_points in range(100, 1501, 100):
+    path = f"./Ex9/N_{num_points}"
+    os.makedirs(path, exist_ok=True)
 # np.set_printoptions(precision=1064)
 np.set_printoptions(suppress=True)
 
@@ -37,11 +42,6 @@ import joblib
 from joblib import Parallel, delayed
 joblib.cpu_count()
 num_processes = -1
-import os
-
-for num_points in range(100, 1501, 100):
-    path = f"./Ex9/N_{num_points}"
-    os.makedirs(path, exist_ok=True)
 
 eps_t= 1e-5
 delta= 1e-2
@@ -71,9 +71,6 @@ def count_repeated_points(points):
     return len(distinct_points), np.array(distinct_points)
 
 
-## Ex7
-
-## Ex8
 def pen(a,b):
 
   def func1(x):
@@ -94,11 +91,9 @@ def pen(a,b):
   bound1 = [(0.0,1.0-b)]
   bound2 = [(0.0,1.0-a)]
 
-#   constraint1 = {'type': 'ineq', 'fun': g1}
   constraint2 = {'type': 'ineq', 'fun': g2}
   
-#   bounds = bound1
-  result1 = minimize(func1, x0=0.0, method='SLSQP', constraints= constraints1, bounds= bound1) #, options={'maxiter':5}
+  result1 = minimize(func1, x0=0.0, method='SLSQP', constraints= constraints1, bounds= bound1) 
   result2 = minimize(func2, x0=0.0, method='SLSQP',constraints= constraint2, bounds= bound2)
 
   shadowX = result1.x
@@ -117,7 +112,7 @@ def run_example(num_points):
       return yMax + (1.0 - yMax)*(math.pow(0.99,k))
 
 
-    def regressLine(xVal, m, yInt): #returns the y value of any x coordinate on the line
+    def regressLine(xVal, m, yInt): 
       return m * xVal + yInt
 
     linReg = LinearRegression()
@@ -129,7 +124,6 @@ def run_example(num_points):
     n_delete= int((25*num_points)/100)
     
     
-#     num_points,n_delete= 100,30
 
 
     setXYP = np.zeros(3*num_points)
@@ -158,13 +152,12 @@ def run_example(num_points):
     lowXpoint = np.min(setXYP[:,0])
     highXpoint = np.max(setXYP[:,0])
 
-    #running through the algorithm
 
     for k in range (1,1001):
 
       results = Parallel(n_jobs=num_processes)(delayed(pen)(setXYP[i,0], setXYP[i,1])
       for i in range(num_points))
-      setXYP[:,2] = np.fromiter(results,dtype=float)#,dtype=float
+      setXYP[:,2] = np.fromiter(results,dtype=float)
       setXYP = setXYP[setXYP[:,2].argsort()]
       newX = setXYP[:n_delete-1,0]
       newY = setXYP[:n_delete-1,1]
@@ -172,7 +165,6 @@ def run_example(num_points):
       newX = newX.reshape(-1,1)
 
       linReg.fit(newX, newY)
-    #   print(num, 'f(x) = ', linReg.coef_,'*x +', linReg.intercept_)
 
       m = linReg.coef_
       yInt = linReg.intercept_
@@ -203,36 +195,30 @@ def run_example(num_points):
 
       lowXpoint = np.min(setXYP[:,0])
       highXpoint = np.max(setXYP[:,0])
-      num += 1
-
 
         
     return setXYP
 
 
 nubmer_points_list= [100, 200,300,400,500,600,700,800,900,1000,1100,1200, 1300,1400,1500]
-# n_runs= [5, 10, 15, 20, 25, 30, 35, 40, 50, 55, 60]
 n_runs= [10]
 
-def run_each(num_points):
-    res= run_example(num_points)
-    res= res[:,:-1]
-    #temp_res.extend(res)
-    res= np.array(res)#
-    ## Get distinct points
-    #num, distinct_points = count_repeated_points(res)
-    #distinct_points= np.array(distinct_points)
-    
-    return res
-
-def run_parallel(num_points,n_r):
-    results = Parallel(n_jobs=num_processes)(delayed(run_each)(num_points) for _ in range(n_r))
-    for i in range(n_r):
-        np.savetxt('./Ex9/N_'+str(num_points)+"/"+str(i+1)+"_"+"solns"+'_'+'run_'+str(n_r)+'_'+str(num_points)+'pts'+'.txt', results[i], delimiter=',')
-    #return results
-
-
 def run_with_diff_n_runs(num_points):
-    Parallel(n_jobs=num_processes)(delayed(run_parallel)(num_points,n_r) for n_r in n_runs)
+    final_res= []
+    for n_r in n_runs:
+        temp_res= []
+        
+        for i in range(n_r):
+            res= run_example(num_points)
+            res= res[:,:-1]
+            temp_res.extend(res)
+            res= np.array(res)
+
+            np.savetxt('./Ex9/N_'+str(num_points)+"/"+str(i+1)+"_"+"solns"+'_'+'run_'+str(n_r)+'_'+str(num_points)+'pts'+'.txt', res, delimiter=',')
+
+            
+        final_res.append(temp_res)
+            
+    return final_res
 
 results = Parallel(n_jobs=num_processes)(delayed(run_with_diff_n_runs)(num_points) for num_points in nubmer_points_list)
